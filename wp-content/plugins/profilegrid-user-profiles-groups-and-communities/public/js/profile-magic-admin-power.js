@@ -215,10 +215,10 @@
     
     $(".pmrow").has(".pm-col-spacer").addClass("pm-row-spacer");
     $(".pmrow").has(".pm-col-divider").addClass("pm-row-divider");
-    if($('#thread_pane').length)
+    if($('#pg-profile-tabs').length)
     {
         // console.log("working");
-        start_messenger();
+        refresh_messenger();
         setTimeout(function(){pm_get_messenger_notification('','nottyping');}, 1000);
         $("#typing_on .pm-typing-inner").hide();
     }

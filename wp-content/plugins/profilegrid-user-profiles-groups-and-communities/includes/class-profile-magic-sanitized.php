@@ -275,7 +275,7 @@ class PM_sanitizer
                 $value = sanitize_text_field($value);
                 break;
             case 'description':
-                $value = sanitize_text_field($value);
+                $value = wp_kses_post(wp_rel_nofollow($value));
                 break;
             case 'text':
                 $value = sanitize_text_field($value);
@@ -418,6 +418,12 @@ class PM_sanitizer
                     $value = wp_kses_post($value);
                     break;
 				case 'pg_user_profile_seo_desc':
+                    $value = wp_kses_post($value);
+                    break;
+                case 'pm_blog_notification_email_body':
+                    $value = wp_kses_post($value);
+                    break;
+                case 'pm_new_user_create_admin_email_body':
                     $value = wp_kses_post($value);
                     break;
 				default:

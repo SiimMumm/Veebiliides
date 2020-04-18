@@ -264,8 +264,21 @@ class PM_Custom_Fields {
             <div class="pm-field-lable">
                 <label for="<?php echo esc_attr($row->field_key); ?>"><?php echo esc_attr($row->field_name); ?><?php if ($row->is_required == 1): ?><sup class="pm_estric">*</sup><?php endif; ?></label>
             </div>
-            <div class="pm-field-input <?php if ($row->is_required == 1) echo 'pm_textarearequired'; ?>">
-                <textarea title="<?php echo esc_attr($row->field_desc); ?>" class="<?php if (!empty($field_options)) echo esc_attr($field_options['css_class_attribute']); ?>" maxlength="<?php if (!empty($field_options)) echo esc_attr($field_options['maximum_length']); ?>" cols="<?php if (!empty($field_options)) echo esc_attr($field_options['columns']); ?>" rows="<?php if (!empty($field_options)) echo esc_attr($field_options['rows']); ?>" id="<?php echo esc_attr($row->field_key); ?>" name="<?php echo esc_attr($row->field_key); ?>" placeholder="<?php if (!empty($field_options)) echo esc_attr($field_options['place_holder_text']); ?>"><?php echo $value; ?></textarea>
+            <div class="pm-field-input <?php if ($row->is_required == 1){ if(is_user_logged_in()){echo 'pm_rich_editor_required';}else{ echo 'pm_textarearequired';}} ?>">
+                <?php if(is_user_logged_in()): 
+                    
+                $editor_id = esc_attr($row->field_key);
+                $settings = array('wpautop' => false,'media_buttons' => true,
+                   'teeny' => false,
+                    'dfw' => false,
+                    'tinymce' => true, 
+                    'quicktags' => true
+                );
+                wp_editor($value, $editor_id,$settings );
+                else: ?>
+                 <textarea title="<?php echo esc_attr($row->field_desc); ?>" class="<?php if (!empty($field_options)) echo esc_attr($field_options['css_class_attribute']); ?>" maxlength="<?php if (!empty($field_options)) echo esc_attr($field_options['maximum_length']); ?>" cols="<?php if (!empty($field_options)) echo esc_attr($field_options['columns']); ?>" rows="<?php if (!empty($field_options)) echo esc_attr($field_options['rows']); ?>" id="<?php echo esc_attr($row->field_key); ?>" name="<?php echo esc_attr($row->field_key); ?>" placeholder="<?php if (!empty($field_options)) echo esc_attr($field_options['place_holder_text']); ?>"><?php echo $value; ?></textarea>
+                <?php   
+                endif; ?>
                 <div class="errortext" style="display:none;"></div>
             </div>
         </div>

@@ -540,6 +540,48 @@ class Profile_Magic_Activator {
 		return $format;
 	}
         
+        public function get_field_format_type_MSG_THREADS($field) {
+            
+		switch ($field) {
+			case 't_id':
+				$format = '%d';
+				break;
+			case 's_id':
+				$format = '%d';
+				break;
+                        case 'r_id':
+				$format = '%d';
+				break;
+                        case 'status':
+				$format = '%d';
+				break;
+			default:
+				$format = '%s';
+		}
+		return $format;
+	}
+        
+        public function get_field_format_type_MSG_CONVERSATION($field) {
+            
+		switch ($field) {
+			case 't_id':
+				$format = '%d';
+				break;
+			case 's_id':
+				$format = '%d';
+				break;
+                        case 'm_id':
+				$format = '%d';
+				break;
+                        case 'status':
+				$format = '%d';
+				break;
+			default:
+				$format = '%s';
+		}
+		return $format;
+	}
+        
          public function get_field_format_type_FORM_FIELDS($field) {
 		switch ($field) {
 			case 'field_label':

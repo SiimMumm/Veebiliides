@@ -5,7 +5,7 @@ Tags: user profile, community, membership, profile, profiles, employee profile, 
 Requires at least: 3.5
 Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 3.9.7
+Stable tag: 4.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Beautiful profile building plugin for the rest of us…❤️. Create communities, sign-up pages, paid memberships, restrict content and a lot more!
@@ -368,6 +368,24 @@ Yes, you can change field order of custom fields by drag and drop method in dash
 18. Dashboard Area - All the shortcodes associated with ProfileGrid.
 
 == Changelog ==
+
+= 4.0.0 =
+* Messaging system code revamped.
+* Fixed an issue with recently introduced rich text profile field.
+
+= 3.9.9 =
+* Fixed an issue causing conflict with page optimization plugin reported by @na1man
+
+= 3.9.8 =
+* All emails can now be managed from Email Templates section.
+* Added rich text editor option in custom fields. Works only for logged-in users.
+* Fixed an issue with importing configuration files.
+* By default added NOFOLLOW attributed to links inside user submitted blog posts.
+* Resolved a known conflict with other plugins.
+* Fixed an issue with Stripe payments.
+* Fixed an issue with Group Manager selection.
+* Fixed an auto-fill issue while assigning secondary Group Managers.
+* Fixed an issue with profile tab reordering.
 
 = 3.9.7 =
 * Added new feature! Now you can set global profile privacy level as private.
@@ -1010,6 +1028,24 @@ Yes, you can change field order of custom fields by drag and drop method in dash
 * First Release
 
 == Upgrade Notice ==
+
+= 4.0.0 =
+* Messaging system code revamped.
+* Fixed an issue with recently introduced rich text profile field.
+
+= 3.9.9 =
+* Fixed an issue causing conflict with page optimization plugin reported by @na1man
+
+= 3.9.8 =
+* All emails can now be managed from Email Templates section.
+* Added rich text editor option in custom fields. Works only for logged-in users.
+* Fixed an issue with importing configuration files.
+* By default added NOFOLLOW attributed to links inside user submitted blog posts.
+* Resolved a known conflict with other plugins.
+* Fixed an issue with Stripe payments.
+* Fixed an issue with Group Manager selection.
+* Fixed an auto-fill issue while assigning secondary Group Managers.
+* Fixed an issue with profile tab reordering.
 
 = 3.9.7 =
 * Added new feature! Now you can set global profile privacy level as private.

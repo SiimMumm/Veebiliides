@@ -126,12 +126,14 @@ class Profile_Magic {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-profile-magic-paypal-functions.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-profile-magic-export-import.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-profile-magic-messenger.php';
+                require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-profile-magic-chat-system.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-profile-magic-friends-helper.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-profile-magic-friends-integration.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-profile-magic-notifications.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'widgets/profilegrid-groups-widgets.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'widgets/profilegrid-user-blogs-widgets.php';
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'widgets/profilegrid-user-login-widgets.php';
+                
                 /**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
@@ -316,6 +318,7 @@ class Profile_Magic {
                 $this->loader->add_action('wp_ajax_nopriv_pm_advance_user_search',$plugin_public,'pm_advance_user_search');
                 $this->loader->add_action('wp_ajax_pm_advance_search_get_search_fields_by_gid',$plugin_public,'pm_advance_search_get_search_fields_by_gid');
                 $this->loader->add_action('wp_ajax_nopriv_pm_advance_search_get_search_fields_by_gid',$plugin_public,'pm_advance_search_get_search_fields_by_gid'); 
+                
                 $this->loader->add_action('wp_ajax_pm_messenger_send_new_message',$plugin_public,'pm_messenger_send_new_message');
                 $this->loader->add_action('wp_ajax_pm_messenger_show_threads',$plugin_public,'pm_messenger_show_threads');
                 $this->loader->add_action('wp_ajax_pm_messenger_show_messages',$plugin_public,'pm_messenger_show_messages');
@@ -330,6 +333,11 @@ class Profile_Magic {
                 $this->loader->add_action('wp_ajax_nopriv_pm_load_user_blogs_shortcode_posts',$plugin_public,'pm_load_user_blogs_shortcode_posts');
                 $this->loader->add_action('wp_ajax_nopriv_pm_load_pg_blogs',$plugin_public,'pm_load_pg_blogs');
                 $this->loader->add_action('wp_ajax_pm_get_rid_by_uname',$plugin_public,'pm_get_rid_by_uname');
+                $this->loader->add_action('wp_ajax_pm_activate_new_thread',$plugin_public,'pm_activate_new_thread');
+                $this->loader->add_action('wp_ajax_pm_get_active_thread_header',$plugin_public,'pm_get_active_thread_header');
+                $this->loader->add_action('wp_ajax_pm_messages_mark_as_read',$plugin_public,'pm_messages_mark_as_read');
+                $this->loader->add_action('wp_ajax_pg_show_all_threads',$plugin_public,'pg_show_all_threads');
+                
                 
                 $this->loader->add_action('profile_magic_profile_tab',$plugin_public, 'pm_right_side_options',10,2);
 		

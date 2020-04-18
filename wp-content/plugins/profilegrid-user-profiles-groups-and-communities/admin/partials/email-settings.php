@@ -16,6 +16,8 @@ if(filter_input(INPUT_POST,'submit_settings'))
 		if(!isset($post['pm_enable_smtp'])) $post['pm_enable_smtp'] = 0;
         if(!isset($post['pm_admin_account_review_notification'])) $post['pm_admin_account_review_notification'] = 0;
         if(!isset($post['pm_admin_account_deletion_notification'])) $post['pm_admin_account_deletion_notification'] = 0;
+        if(!isset($post['pm_attached_submission_data_admin_email_body'])) $post['pm_attached_submission_data_admin_email_body'] = 0;
+        
         if(!isset($post['pm_admin_email'])) $post['pm_admin_email'] = array();
 		foreach($post as $key=>$value)
 		{
@@ -83,6 +85,53 @@ if(!is_array($admin_email)) $admin_email = array('');
          <div class="errortext"></div>
         </div>
         <div class="uimnote"><?php _e("If you want to notify multiple people about registrations, enter each one's email address individually.",'profilegrid-user-profiles-groups-and-communities');?></div>
+      </div>
+           
+            <div class="uimrow">
+                    <div class="uimfield">
+                      <?php _e( 'Email Subject','profilegrid-user-profiles-groups-and-communities' ); ?>
+                    </div>
+                    <div class="uiminput">
+                     <input type="text" name="pm_new_user_create_admin_email_subject" id="pm_new_user_create_admin_email_subject" value="<?php echo $dbhandler->get_global_option_value('pm_new_user_create_admin_email_subject',__('New User Created','profilegrid-user-profiles-groups-and-communities'));?>" />
+                      
+                    </div>
+                    <div class="uimnote"><?php _e('Subject of the email sent to the admin.','profilegrid-user-profiles-groups-and-communities');?></div>
+                 </div>
+                <?php
+                $settings = array('wpautop' => false,'media_buttons' => true,
+                    'textarea_name' => 'pm_new_user_create_admin_email_body',
+                    'textarea_rows' => 20,
+                    'tabindex' => '',
+                    'tabfocus_elements' => ':prev,:next', 
+                    'editor_css' => '', 
+                    'editor_class' => '',
+                    'teeny' => false,
+                    'dfw' => false,
+                    'tinymce' => true, // <-----
+                    'quicktags' => true
+                );
+                $pm_new_user_create_admin_email_body = $dbhandler->get_global_option_value('pm_new_user_create_admin_email_body',__('New user created','profilegrid-user-profiles-groups-and-communities'));
+                ?>
+	    
+                <div class="uimrow">
+                    <div class="uimfield">
+                      <?php _e( 'Email Content','profilegrid-user-profiles-groups-and-communities' ); ?>
+                    </div>
+                    <div class="uiminput">
+                        <?php wp_editor( $pm_new_user_create_admin_email_body, 'pm_new_user_create_admin_email_body',$settings);?>
+                    </div>
+                    <div class="uimnote"><?php _e('Content of the email sent to the admin.','profilegrid-user-profiles-groups-and-communities');?></div>
+                 </div>
+           
+           <div class="uimrow">
+        <div class="uimfield">
+          <?php _e( 'Include Form Data','profilegrid-user-profiles-groups-and-communities' ); ?>
+        </div>
+        <div class="uiminput">
+           <input name="pm_attached_submission_data_admin_email_body" id="pm_attached_submission_data_admin_email_body" type="checkbox" <?php checked($dbhandler->get_global_option_value('pm_attached_submission_data_admin_email_body'),'1'); ?> class="pm_toggle" value="1" style="display:none;" />
+          <label for="pm_attached_submission_data_admin_email_body"></label>
+        </div>
+        <div class="uimnote"><?php _e('Append field values from registration form submitted by the user during registration process.','profilegrid-user-profiles-groups-and-communities');?></div>
       </div>
            
            <div class="uimrow">

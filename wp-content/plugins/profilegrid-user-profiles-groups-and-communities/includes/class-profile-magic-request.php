@@ -976,7 +976,7 @@ class PM_request {
                 $dbhandler = new PM_DBhandler;
                 $email_address='';
                 $email_array = maybe_unserialize($dbhandler->get_global_option_value('pm_admin_email'));
-                if(!empty($email_array))
+                if(!empty($email_array) && is_array($email_array))
                 {
                   $email_address = implode(',',$email_array);  
                 }
@@ -1821,13 +1821,13 @@ class PM_request {
          }
          
          
-         public function pm_get_user_all_threads($uid) {
+         public function pm_get_user_all_threads($uid,$limit=false) {
         if ($uid) {
             $dbhandler = new PM_DBhandler;
             $identifier = 'MSG_THREADS';
-            $where = 1;
-            $additional = ' s_id = '.$uid.' OR r_id = '.$uid;
-            $threads = $dbhandler->get_all_result($identifier, $column = '*', $where, 'results', 0, false, $sort_by = 'timestamp', true,$additional);
+            $where = array('status'=>2);
+            $additional = 'AND s_id = '.$uid.' OR r_id = '.$uid;
+            $threads = $dbhandler->get_all_result($identifier, $column = '*', $where, 'results', 0,$limit, $sort_by = 'timestamp', true,$additional);
             return $threads;
         }
     }
@@ -1837,7 +1837,7 @@ class PM_request {
         if($sid!=''&& $rid!='')
         {
             $dbhandler = new PM_DBhandler;
-            $pmemail = new PM_Emails;
+            //$pmemail = new PM_Emails;
 
             $identifier = 'MSG_CONVERSATION';
             $status = 2;
@@ -1851,19 +1851,19 @@ class PM_request {
             $mid = $dbhandler->insert_row($identifier, $data);
             $args = array($mid,$sid, $rid, $content);
             wp_schedule_single_event( time() + 1800, 'pm_send_message_notification',array($mid,$args));
-            $send_email = $dbhandler->get_global_option_value('pm_unread_message_notification','0');
-            if($send_email=='1')
-            {
-                $pmemail->pm_send_unread_message_notification($sid,$rid);                        
-            }
+//            $send_email = $dbhandler->get_global_option_value('pm_unread_message_notification','0');
+//            if($send_email=='1')
+//            {
+//                $pmemail->pm_send_unread_message_notification($sid,$rid);                        
+//            }
         }
        if($mid=='false'){
            return false;
        }else{
        
-       $this->pm_update_thread_time($tid); 
-       $this->pm_update_thread_status($tid,$rid); //RID is sent for status of thread
-       return true;
+       $this->pm_update_thread_time($tid,2); 
+       //$this->pm_update_thread_status($tid,2); //RID is sent for status of thread
+       return $tid;
        }
           
     }
@@ -1952,13 +1952,16 @@ class PM_request {
     public function get_unread_msg_count($tid){
         $dbhandler = new PM_DBhandler;
         $identifier='MSG_CONVERSATION';
+        $count = null;
         $uid = wp_get_current_user()->ID;
         $where = 1;
         $status = 2;
         $additional = " t_id = $tid AND s_id NOT IN ($uid) AND status =$status ";
         $message = $dbhandler->get_all_result($identifier, $column = 'm_id', $where, 'results', 0, FALSE, $sort_by = 'timestamp', true,$additional);
-         
-        $count= sizeof($message);
+        if(isset($message) && !empty($message))
+        {
+            $count= sizeof($message);
+        }
         return $count;
         
     }
@@ -1969,7 +1972,7 @@ class PM_request {
         $identifier = 'MSG_CONVERSATION';
         $where = 1;
         $additional = " t_id = $tid";
-        $message = $dbhandler->get_all_result($identifier, $column = '*', $where, 'results', $offset, $limit, $sort_by = 'timestamp', $descending,$additional);
+        $message = $dbhandler->get_all_result($identifier, $column = '*',array('t_id'=>$tid), 'results', $offset, $limit, $sort_by = 'timestamp', $descending);
         if(isset($message) && !empty($message)):
             if(sizeof($message)>0){
                return $message;
@@ -1987,7 +1990,7 @@ class PM_request {
         $messages = $dbhandler->get_all_result($identifier, $column = 'm_id', $where, 'results', 0, $limit=false, $sort_by = 'timestamp', true,$additional);
         $data=array('status'=> '1');
         $data = $this->sanitize_request($data,$identifier);
-        if(sizeof($messages)>0){
+        if(is_array($messages) && sizeof($messages)>0){
             foreach($messages as $message){
               $updated=$dbhandler->update_row($identifier, 'm_id',$message->m_id,$data);
            }
@@ -1999,14 +2002,8 @@ class PM_request {
     public function delete_thread($tid){
         $dbhandler = new PM_DBhandler;
         $identifier = 'MSG_THREADS';
-        $uid = wp_get_current_user()->ID;
-        $message =$this->get_message_of_thread($tid, '1');
-        $thread = $dbhandler->get_row('MSG_THREADS',$tid,'t_id');
-        $thread_desc=maybe_unserialize( $thread->thread_desc);
-        $thread_desc["$uid"]['delete_mid']=$message[0]->m_id;
-        $value= maybe_serialize($thread_desc);
-        $data = array('thread_desc'=>$value);
-        $return= $dbhandler->update_row('MSG_THREADS','t_id',$tid, $data);
+        $data = array('status'=>1);
+        $return= $dbhandler->update_row($identifier,'t_id',$tid, $data);
 
     return $return;
     }
@@ -4479,7 +4476,7 @@ elseif(!empty($is_search)) {
         $tabs['pg-friends'] = array('id'=>'pg-friends','title'=>__('Friends','profilegrid-user-profiles-groups-and-communities'),'status'=>$friends_tab_status,'class'=>'pg-friend-tab');
         $tabs['pg-settings'] = array('id'=>'pg-settings','title'=>__('Settings','profilegrid-user-profiles-groups-and-communities'),'status'=>'1','class'=>'pg-setting-tab');
         
-        $pm_profile_tabs_order_status = $dbhandler->get_global_option_value('pm_profile_tabs_order_status',$tabs);
+        $pm_profile_tabs_order_status = maybe_unserialize($dbhandler->get_global_option_value('pm_profile_tabs_order_status',$tabs));
         return apply_filters('pm_profile_tabs',$pm_profile_tabs_order_status);
     }
     
@@ -4495,7 +4492,7 @@ elseif(!empty($is_search)) {
                case 'pg-messages':
                    if($uid == $current_user->ID):?>
                     <audio id="msg_tone" src="<?php echo $path; ?>"></audio>
-                    <li class="pm-profile-tab pm-pad10 <?php echo $tab['class'];?>"><a class="pm-dbfl" href="#<?php echo $tab['id'];?>" onClick="refresh_messenger();"><?php _e($tab['title'],'profilegrid-user-profiles-groups-and-communities');?><b id="unread_thread_count" class=""></b></a></li>
+                    <li class="pm-profile-tab pm-pad10 <?php echo $tab['class'];?>"><a class="pm-dbfl" href="#<?php echo $tab['id'];?>" onClick="refresh_messenger();" ><?php _e($tab['title'],'profilegrid-user-profiles-groups-and-communities');?><b id="unread_thread_count" class=""></b></a></li>
 
                     <?php endif;
                    break;

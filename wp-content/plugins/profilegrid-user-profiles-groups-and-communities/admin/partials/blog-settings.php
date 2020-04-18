@@ -135,7 +135,7 @@ if(filter_input(INPUT_POST,'submit_settings'))
            <input name="pm_blog_notification_user" id="pm_blog_notification_user" type="checkbox" <?php checked($dbhandler->get_global_option_value('pm_blog_notification_user','0'),'1'); ?> class="pm_toggle" value="1" style="display:none;" />
           <label for="pm_blog_notification_user"></label>
         </div>
-        <div class="uimnote"><?php _e("Send an email notifying users when their blog post is published successfully",'profilegrid-user-profiles-groups-and-communities');?></div>
+        <div class="uimnote"><?php _e("Send an email notifying users when their blog post is published successfully. The email content can be modified from Email Templates section.",'profilegrid-user-profiles-groups-and-communities');?></div>
       </div>
         
         <div class="uimrow">
@@ -143,11 +143,60 @@ if(filter_input(INPUT_POST,'submit_settings'))
           <?php _e( 'Notify Admin','profilegrid-user-profiles-groups-and-communities' ); ?>
         </div>
         <div class="uiminput">
-           <input name="pm_blog_notification_admin" id="pm_blog_notification_admin" type="checkbox" <?php checked($dbhandler->get_global_option_value('pm_blog_notification_admin','0'),'1'); ?> class="pm_toggle" value="1" style="display:none;" />
+           <input name="pm_blog_notification_admin" id="pm_blog_notification_admin" type="checkbox" <?php checked($dbhandler->get_global_option_value('pm_blog_notification_admin','0'),'1'); ?> class="pm_toggle" value="1" style="display:none;" onClick="pm_show_hide(this,'pm_notify_admin_html')" />
           <label for="pm_blog_notification_admin"></label>
         </div>
         <div class="uimnote"><?php _e("Send an email notifying admin when a user submits new blog post.",'profilegrid-user-profiles-groups-and-communities');?></div>
       </div>
+        
+       <div class="childfieldsrow" id="pm_notify_admin_html" style=" <?php if($dbhandler->get_global_option_value('pm_blog_notification_admin',0)==1){echo 'display:block;';} else { echo 'display:none;';} ?>">
+            
+                <div class="uimrow">
+                    <div class="uimfield">
+                      <?php _e( 'Email Subject','profilegrid-user-profiles-groups-and-communities' ); ?>
+                    </div>
+                    <div class="uiminput">
+                     <input type="text" name="pm_blog_notification_email_subject" id="pm_blog_notification_email_subject" value="<?php echo $dbhandler->get_global_option_value('pm_blog_notification_email_subject',__('New User Blog Post Submitted','profilegrid-user-profiles-groups-and-communities'));?>" />
+                      
+                    </div>
+                    <div class="uimnote"><?php _e('Subject of the email sent to the admin.','profilegrid-user-profiles-groups-and-communities');?></div>
+                 </div>
+                <?php
+                $settings = array('wpautop' => false,'media_buttons' => true,
+                    'textarea_name' => 'pm_blog_notification_email_body',
+                    'textarea_rows' => 20,
+                    'tabindex' => '',
+                    'tabfocus_elements' => ':prev,:next', 
+                    'editor_css' => '', 
+                    'editor_class' => '',
+                    'teeny' => false,
+                    'dfw' => false,
+                    'tinymce' => true, // <-----
+                    'quicktags' => true
+                );
+                $poststatus = $dbhandler->get_global_option_value('pm_blog_status','pending');
+                if($poststatus=='publish')
+                {
+                     $review_body = $dbhandler->get_global_option_value('pm_blog_notification_email_body',__("Hello, <br /> {{user_login}} from {{group_name}} has published a new post titled {{post_name}}. You can view the post by {{post_link}}","profilegrid-user-profiles-groups-and-communities")); 
+                }
+                else
+                {
+                    $review_body = $dbhandler->get_global_option_value('pm_blog_notification_email_body',__("Hello, <br /> {{user_login}} from {{group_name}} has submitted a new post titled {{post_name}} and is pending approval. You can moderate the post by {{edit_post_link}}","profilegrid-user-profiles-groups-and-communities"));
+                }
+                ?>
+	    
+                <div class="uimrow">
+                    <div class="uimfield">
+                      <?php _e( 'Email Content','profilegrid-user-profiles-groups-and-communities' ); ?>
+                    </div>
+                    <div class="uiminput">
+                        <?php wp_editor( $review_body, 'pm_blog_notification_email_body',$settings);?>
+                    </div>
+                    <div class="uimnote"><?php _e('Content of the email sent to the admin.','profilegrid-user-profiles-groups-and-communities');?></div>
+                 </div>
+                
+                
+            </div>   
         
     </div>
       <div class="buttonarea"> 

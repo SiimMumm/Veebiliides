@@ -1,4 +1,4 @@
-/*----- Theme Six----*/
+/*----- Theme Five----*/
   
 .pm-group-view.pg-theme-five .pm-cover-image {   
     height: 450px;
@@ -87,9 +87,16 @@
 
 .pm-group-view.pg-theme-five .pm-profile-title-header .pm-group-icon {   
     position: absolute;
-    bottom: 60px;
-    left: 30%;
+    bottom: 0px;
+    left: 0px;
+    max-width: 100%;
 }
+
+.pm-group-view.pg-theme-five .pm-profile-title-header .pm-group-icon #pg-group-badge-dock ul {text-align: center;}
+
+
+
+
 .pm-group-view.pg-theme-five .pg-additional-header .pg-additional-col .pm-user-mycred-rank-points .pm-user-mycred-rank-logo img {
     width: 15px;
     margin-top: 3px !important;

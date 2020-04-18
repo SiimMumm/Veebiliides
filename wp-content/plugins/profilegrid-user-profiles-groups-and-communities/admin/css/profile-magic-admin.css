@@ -1657,6 +1657,7 @@ input.pm_toggle + label {
     -moz-transition: background 0.2s;
     -o-transition: background 0.2s;
     transition: background 0.2s;
+    box-sizing: border-box;
 }
 
 input.pm_toggle + label {
@@ -2082,9 +2083,6 @@ select.warning {
     margin-left: 50px;
 }
 
-.uimfield {
-    padding-top: 10px;
-}
 
 .uimnote {
     color: #555d66;

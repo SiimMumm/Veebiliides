@@ -2700,5 +2700,104 @@ class PM_HTML_Creator
             }
         }
         
+        public function pm_get_user_chats($receiver_uid)
+        {
+            $pmrequests = new PM_request;
+            $current_user = wp_get_current_user();
+            $pmmessenger = new ProfileMagic_Chat();
+            $return = $pmmessenger->pm_messenger_show_threads('');
+//            $message_display="";
+//            if($receiver_uid!='')
+//            {
+//                $receiver_user = $pmmessenger->pm_messenger_show_thread_user($receiver_uid);
+//                $tid = $pmrequests->get_thread_id($receiver_uid, $current_user->ID);
+//                if($tid!=false)
+//                {
+//                    $message_display = $pmmessenger->pm_messenger_show_messages($tid, '', $loadnum=1,0);
+//                    $return=$pmmessenger->pm_messenger_show_threads($tid);
+//                }
+//            }
+            ?>
+         
+          <div class="pm-group-view">
+        <div class="pm-section pm-dbfl" > 
+            <svg onclick="show_pg_section_left_panel()" class="pg-left-panel-icon" fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/>
+    <path d="M0-.5h24v24H0z" fill="none"/>
+</svg>
+            <div class="pm-section-left-panel pm-section-nav-vertical pm-difl " id="thread_pane">
+                
+                <div class="dbfl pm-new-message-area">
+                    <div  class="pm-user-display-area pm-dbfl ">
+                    <div class="pm-user-send-to pm-difl">To</div>
+                    <div class="pm-user-send-box pm-difl">   
+                        <input type="text" id="receipent_field" autocomplete="off" value="<?php if(isset($receiver_user)) echo $receiver_user['name']; ?>" placeholder="Username" style="min-width: 100%;" onblur="pm_get_rid_by_uname(this.value)"/>
+                    <input type="hidden" id="receipent_field_rid" name="rid" value="<?php if(isset($receiver_user)) echo $receiver_user['uid']; ?>"  />   
+                    </div>
+                    
+                    <div id="pm-autocomplete"></div>
+                    <div id="pm-username-error" class="pm-dbfl"></div>
+                    </div>
+                </div>
+                <ul class="dbfl" id="threads_ul">
+                    <?php echo $return; ?>
+                </ul>
+            </div>
+
+<div class="pm-section-right-panel">
+            <div class="pm-blog-desc-wrap pm-difl pm-section-content pm-message-thread-section">
+                <div id="pm-msg-overlay" class="pm-msg-overlay  <?php  if(($return=="You have no conversations yet.")&& !isset($receiver_user)) echo "pm-overlay-show1" ?>"> </div>
+                <form id="chat_message_form" onsubmit="pm_messenger_send_chat_message(event);">  
+                    <div  class="pm-user-display-area pm-dbfl ">
+                        
+                    </div>
+                
+                
+                <div id="message_display_area" class="pm-difl pm_full_width_profile"  style="min-height:200px;max-height:200px;max-width: 550px;overflow-y:auto;">
+                    <?php //echo $message_display;?>
+                <?php   $path =  plugins_url( '../public/partials/images/typing_image.gif', __FILE__ );?>
+               
+                </div>
+                    
+                <div id="typing_on"  class="pm-user-description-row pm-dbfl pm-border"><div class="pm-typing-inner"><img height="9px" width="40px" src="<?php echo $path; ?>"/></div></div>
+             
+                <div class="pm-dbfl pm-chat-messenger-box">
+                      <input type="hidden" name="action" value='pm_messenger_send_new_message' /> 
+                    <input type="hidden" id="thread_hidden_field" name="tid" value=""/>
+                    <div class="emoji-container">
+                        <div class="pm-messenger-user-profile-pic"><?php $avatar =get_avatar($current_user->ID, 50, '', false, array('class' => 'pm-user-profile','force_display'=>true));
+                            echo $avatar;
+                        ?></div>
+                    <textarea id="messenger_textarea" data-emojiable="true"  name="content" style="min-width: 100%;height:100px;"
+                        
+                               form="chat_message_form" placeholder="<?php _e("Type your message..","profilegrid-user-profiles-groups-and-communities");?>" ></textarea> 
+                    <input type="hidden" disabled  maxlength="4" size="4" value="1000" id="counter">
+                    <input type="hidden" name="sid" value="" />   
+                    <div class="pm-messenger-button">
+                        <label>
+                          <input id="send_msg_btn" type="submit" name="send" value="<?php _e("send","profilegrid-user-profiles-groups-and-communities");?>"/>
+                    <svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill:#ccc">
+    <g transform="matrix(1.05995e-15,17.3103,-17.3103,1.05995e-15,22248.8,-22939.9)">
+        <path d="M1340,1256C1340,1256 1350.4,1279.2 1352.6,1284.1C1352.68,1284.28 1352.65,1284.49 1352.53,1284.65C1352.41,1284.81 1352.22,1284.89 1352.02,1284.86C1349.73,1284.54 1344.07,1283.75 1342.5,1283.53C1342.26,1283.5 1342.07,1283.3 1342.04,1283.06C1341.71,1280.61 1340,1268 1340,1268C1340,1268 1338.33,1280.61 1338.01,1283.06C1337.98,1283.31 1337.79,1283.5 1337.54,1283.53C1335.97,1283.75 1330.28,1284.54 1327.98,1284.86C1327.78,1284.89 1327.58,1284.81 1327.46,1284.65C1327.35,1284.49 1327.32,1284.28 1327.4,1284.1C1329.6,1279.2 1340,1256 1340,1256Z"/>
+    </g>
+    </svg>
+                        </label>      
+                    </div>
+                </div>
+                    </div>
+            </form>
+                
+               
+
+        </div>
+</div>
+
+        </div> </div> 
+                
+            <?php
+        }
+        
+        
+        
     }
 ?>

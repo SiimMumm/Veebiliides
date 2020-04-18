@@ -247,6 +247,7 @@ class Profile_Magic_Basic_Functions
     
     public function pg_get_extension_install_url($plugin)
     {
+        $dbhandler = new PM_DBhandler;
         switch($plugin)
         {
             case 'WOOCOMMERCE':
@@ -340,6 +341,12 @@ class Profile_Magic_Basic_Functions
                 break;  
         }
         
+        $mgp = $dbhandler->get_global_option_value('mgp_a_id','');
+        if($mgp!='')
+        {
+            $url = 'https://metagauss.com/get-profilegrid-for-wordpress/?mgp='.$mgp;
+        }
+                
         return $url;
     }
     

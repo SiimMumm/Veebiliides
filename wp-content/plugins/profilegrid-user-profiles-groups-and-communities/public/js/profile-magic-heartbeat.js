@@ -67,5 +67,5 @@
         //    console.log('END ERROR');			
     });
     
-    pm_messenger_notification_extra_data(); 
+    //pm_messenger_notification_extra_data(); 
 })(jQuery);

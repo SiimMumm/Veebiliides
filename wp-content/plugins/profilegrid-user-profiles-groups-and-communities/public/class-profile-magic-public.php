@@ -147,6 +147,7 @@ class Profile_Magic_Public {
                 {
                     wp_enqueue_script('heartbeat');
                 }
+                
                 wp_enqueue_script( 'pg-password-checker.js', plugin_dir_url( __FILE__ ) . 'js/pg-password-checker.js', array( 'jquery' ), $this->version, true );
                 wp_enqueue_script( 'pg-profile-menu.js', plugin_dir_url( __FILE__ ) . 'js/pg-profile-menu.js', array( 'jquery' ), $this->version, false );
                 wp_enqueue_script( 'profile-magic-admin-power.js', plugin_dir_url( __FILE__ ) . 'js/profile-magic-admin-power.js', array( 'jquery' ), $this->version, true );
@@ -205,8 +206,14 @@ class Profile_Magic_Public {
                     $autologout_obj['pm_show_logout_prompt'] = $dbhandler->get_global_option_value('pm_show_logout_prompt','0');
                     wp_localize_script('profile-magic-auto-logout', 'pm_autologout_obj',$autologout_obj);
                 endif;
-
-
+                
+                wp_enqueue_script( 'profile-magic-chat', plugin_dir_url( __FILE__ ) . 'js/profile-magic-chat.js', array( 'jquery' ), $this->version, false );
+                $object = array();
+                $object['ajax_url'] = admin_url( 'admin-ajax.php');
+                $object['empty_chat_message'] = __("I am sorry, I can't send an empty message. Please write something and try sending it again.",'profilegrid-user-profiles-groups-and-communities');
+                $object['plugin_emoji_url'] = plugin_dir_url( __FILE__ ).'partials/images/img';
+                $object['seding_text'] =__("Sending","profilegrid-user-profiles-groups-and-communities");
+                wp_localize_script( 'profile-magic-chat', 'pm_chat_object',$object);
         }
 
         public function register_shortcodes()
@@ -936,7 +943,7 @@ class Profile_Magic_Public {
 
         public function pm_messenger_send_new_message()
         {
-            $pmmessenger = new PM_Messenger();    
+            $pmmessenger = new ProfileMagic_Chat();    
             if(isset($_POST)){
                 $rid = $_POST['rid'];
                 $content = $_POST['content'];
@@ -950,13 +957,12 @@ class Profile_Magic_Public {
 
         
         public function pm_messenger_show_messages(){
-            $pmmessenger = new PM_Messenger();
-            $tid = filter_input(INPUT_POST, 'tid');  
-            $t_status = filter_input(INPUT_POST, 't_status'); 
+            $pmmessenger = new ProfileMagic_Chat();
+            $tid = filter_input(INPUT_POST, 'tid');        
             $loadnum = filter_input(INPUT_POST, 'loadnum');
-            $last_mid = filter_input(INPUT_POST, 'last_mid');
             $timezone = filter_input(INPUT_POST, 'timezone');
-            $return = $pmmessenger->pm_messenger_show_messages($tid, $t_status, $loadnum,$last_mid,$timezone);
+            //echo $tid;
+            $return = $pmmessenger->pm_messenger_show_messages($tid,$loadnum,$timezone);
             echo $return;
             die;
         }
@@ -976,16 +982,35 @@ class Profile_Magic_Public {
      
 
         
-    public function pm_messenger_delete_threads(){
-            $pmmessenger = new PM_Messenger();
-            $tid = filter_input(INPUT_POST, 'tid');
-            $return = $pmmessenger->pm_messenger_delete_threads($tid);
-            echo $return;
-            die;
+    public function pm_messenger_delete_threads()
+    {
+        $pmrequests = new PM_request;
+        $uid = get_current_user_id();
+        $pmmessenger = new ProfileMagic_Chat();
+        $tid = filter_input(INPUT_POST, 'tid');
+        $delete = $pmmessenger->pm_messenger_delete_threads($tid);
+        $thread = $pmrequests->pm_get_user_all_threads($uid,1);
+        $return = array();
+        if(!empty($thread))
+        {
+            if($thread[0]->s_id==$uid)
+            {
+                 $return['uid'] = $thread[0]->r_id;
+            }
+            else
+            {
+                $return['uid'] = $thread[0]->s_id;
             }
             
+            $return['tid']= $thread[0]->t_id;
+        }
+        $data = json_encode($return);
+        echo $data;
+        die;
+    }
+            
     public function pm_messenger_notification_extra_data(){
-            $pmmessenger = new PM_Messenger();
+            $pmmessenger = new ProfileMagic_Chat();
             $return = $pmmessenger->pm_messenger_notification_extra_data();
             echo $return;
             die;
@@ -994,11 +1019,11 @@ class Profile_Magic_Public {
     public function pm_autocomplete_user_search(){
     $dbhandler = new PM_DBhandler;
     $pmrequests = new PM_request;
-    $uid = wp_get_current_user()->ID;
+    $uid = get_current_user_id();
     $name = filter_input(INPUT_POST, 'name');
     $meta_args = array('status'=>'0');
     $search =$name; 
-    $limit = 20;
+    $limit = '';
     $exclude = array();
     $exclude[] = $uid;
     $meta_query_array = $pmrequests->pm_get_user_meta_query($meta_args);
@@ -1012,7 +1037,7 @@ class Profile_Magic_Public {
             if($user->ID!=$uid)
             {
                 $user_info['id']=$user->ID;
-                $user_info['label']=$user->user_login;
+                $user_info['label']=$pmrequests->pm_get_display_name($user->ID,true);
                 $return[]=$user_info;
             }
         }
@@ -1161,10 +1186,18 @@ class Profile_Magic_Public {
                 if($pm_admin_notification==1)
                 {
                         $exclude = array('user_avatar','file','user_pass','confirm_pass','heading','paragraph');
-                        $admin_html = $pmrequests->pm_admin_notification_message_html($post,$gid,$fields,$exclude);
                         $subject = __('New User Created','profilegrid-user-profiles-groups-and-communities');
-                        $admin_message = '<p>'.__('New user created','profilegrid-user-profiles-groups-and-communities').'</p>'.$admin_html;
-                        $pmemails->pm_send_admin_notification($subject,$admin_message);	
+                        $admin_email_subject = $dbhandler->get_global_option_value('pm_new_user_create_admin_email_subject',$subject);
+                        $admin_message = '<p>'.__('New user created','profilegrid-user-profiles-groups-and-communities').'</p>';
+                        $admin_email_message = $dbhandler->get_global_option_value('pm_new_user_create_admin_email_body',$admin_message); 
+                        $attached_email_body = $dbhandler->get_global_option_value('pm_attached_submission_data_admin_email_body',0);
+                        if($attached_email_body==1)
+                        {
+                           $admin_html = $pmrequests->pm_admin_notification_message_html($post,$gid,$fields,$exclude);
+                           $admin_email_message .= $admin_html;
+                        }
+                        $admin_email_message = $pmemails->pm_filter_email_content($admin_email_message,$user_id);
+                        $pmemails->pm_send_admin_notification($admin_email_subject,$admin_email_message);	
                 }
 
                 //$pmemails->pm_send_group_based_notification($gid,$user_id,'on_registration');
@@ -2125,6 +2158,7 @@ class Profile_Magic_Public {
                     $uid = $current_user->ID;
                 }
                 $user_info = get_user_by('ID', $uid);
+                if($user_info):
                 $content = $pmemails->pm_filter_email_content($meta_content,$uid);
                 $avatar = get_avatar($user_info->user_email,150,'',false,array('class'=>'pm-user','force_display'=>true));
                 $string =  $pmrequests->pm_get_display_name($uid);
@@ -2141,6 +2175,7 @@ class Profile_Magic_Public {
                 <meta property="og:url" content="<?php echo $pmrequests->pm_get_user_profile_url($uid); ?>" />
                 <meta property="og:description" content="<?php echo str_replace('\\', '', $content); ?>" />
                 <?php
+                endif;
             }
         }
         
@@ -3242,6 +3277,13 @@ class Profile_Magic_Public {
         {
             $notification = new Profile_Magic_Notification;
             $notification->pm_added_new_message_notification($rid,$sid,$content);
+            $send_email = $dbhandler->get_global_option_value('pm_unread_message_notification','0');
+            if($send_email=='1')
+            {
+                $pmemail = new PM_Emails;
+                $pmemail->pm_send_unread_message_notification($sid,$rid);                        
+            }
+            
         }
         // Get the timestamp for the next event.
         $timestamp = wp_next_scheduled( 'pm_send_message_notification' );
@@ -3393,8 +3435,13 @@ class Profile_Magic_Public {
         $dbhandler = new PM_DBhandler;
         $pmrequests = new PM_request;
         $pmhtmlcreator = new PM_HTML_Creator($this->profile_magic,$this->version);
+        if(!empty($primary_gid)):
         $groupinfo = $dbhandler->get_row('GROUPS',$primary_gid);
-        $group_leader = maybe_unserialize($groupinfo->group_leaders);
+        if(!empty($groupinfo))
+        {
+            $group_leader = maybe_unserialize($groupinfo->group_leaders);
+        }
+        endif;
         $current_user = wp_get_current_user();
         if(!empty($gid))
         {
@@ -3501,13 +3548,15 @@ class Profile_Magic_Public {
      {
         $rid = filter_input(INPUT_GET,'rid');
         $current_user = wp_get_current_user();
-        $pmhtmlcreator = new PM_HTML_Creator($this->profile_magic,$this->version); 
+        $profilechat = new ProfileMagic_Chat; 
         if($uid == $current_user->ID): ?>
         <div id="pg-messages" class="pm-dbfl pg-profile-tab-content pg-message-tab">
         <?php
         if(!isset($rid)){$rid='';}
-            $pmhtmlcreator->pm_get_user_messenger($rid);  
+            $profilechat->pg_show_message_tab_html($rid);  
         ?>
+            
+            
             </div>
         <?php endif;
      }
@@ -3541,4 +3590,52 @@ class Profile_Magic_Public {
                 echo '</div>';
         }
     }
+    
+    public function pm_activate_new_thread()
+    {
+        $return = array();
+        $pmrequests = new PM_request;
+        $pmmessenger = new ProfileMagic_Chat();
+        $sid = get_current_user_id();
+        $rid = $other_uid  = filter_input(INPUT_POST, 'uid');
+        $tid = $thread_status = $pmrequests->fetch_or_create_thread($sid, $rid);
+       
+        //$pmrequests->pm_update_thread_time($tid,2); 
+        //$pmrequests->pm_update_thread_status($tid,2);
+        $return["tid"] = $tid;
+        $return["rid"] = $rid;
+        $return["sid"] = $sid;
+        $return["threads"] = $pmmessenger->pm_messenger_show_threads($tid);
+        
+        echo json_encode($return);
+        die;
+    }
+    
+    public function pm_get_active_thread_header()
+    {
+       $pmrequests = new PM_request;
+       $rid = filter_input(INPUT_POST, 'uid');
+       $r_avatar = get_avatar($rid, 50, '', false, array('class' => 'pm-user-profile','force_display'=>true));
+       $r_name = $pmrequests->pm_get_display_name($rid,true);
+        echo '<div class="pm-conversation-box-user pm-difl">'.$r_avatar.'</div>';
+        echo '<p>'.$r_name.'</p>';
+        die;
+    }
+    
+    public function pm_messages_mark_as_read()
+    {
+        $pmrequests = new PM_request;
+        $tid = filter_input(INPUT_POST, 'tid');
+        $pmrequests->update_message_status_to_read($tid);
+        die;
+    }
+    
+    public function pg_show_all_threads()
+    {
+        $pmmessenger = new ProfileMagic_Chat();
+        $return = $pmmessenger->pm_messenger_show_threads();
+        echo $return;
+        die;
+    }
+    
 }

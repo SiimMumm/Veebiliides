@@ -48,9 +48,16 @@ if(isset($_POST['edit_profile']))
 	$gids = $pmrequests->profile_magic_get_user_field_value($_POST['euid'],'pm_group');
         $gid = $pmrequests->pg_filter_users_group_ids($gids);
         if(is_array($gid)){$gid_array = $gid;} else{$gid_array = array($gid);}
-	$exclude = "associate_group in(".implode(',',$gid_array).") and field_type not in('user_name','user_email','user_avatar','user_pass','confirm_pass','paragraph','heading')";
-        $fields =  $dbhandler->get_all_result('FIELDS', $column = '*',1,'results',0,false, $sort_by = 'ordering',false,$exclude);
-	//$errors = $pmrequests->profile_magic_frontend_server_validation($_POST,$_FILES,$_SERVER,$fields,$textdomain,'edit_profile');	
+        if(!empty($gid_array))
+        {
+            $exclude = "associate_group in(".implode(',',$gid_array).") and field_type not in('user_name','user_email','user_avatar','user_pass','confirm_pass','paragraph','heading')";
+            $fields =  $dbhandler->get_all_result('FIELDS', $column = '*',1,'results',0,false, $sort_by = 'ordering',false,$exclude);
+        }
+        else
+        {
+            $fields = array();
+        }
+        //$errors = $pmrequests->profile_magic_frontend_server_validation($_POST,$_FILES,$_SERVER,$fields,$textdomain,'edit_profile');	
 	//print_r($errors);die;
         if(empty($errors))
 	{

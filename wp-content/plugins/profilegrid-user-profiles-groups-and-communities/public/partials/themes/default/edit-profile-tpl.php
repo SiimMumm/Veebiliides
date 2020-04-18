@@ -7,8 +7,11 @@ $pmrequests = new PM_request;
 $pm_customfields = new PM_Custom_Fields;
 $edit_uid = $pmrequests->pm_get_uid_from_profile_slug($edit_uid);
 if(is_array($gid)){$gid_array = $gid;} else{$gid_array = array($gid);}
-$exclude = "associate_group in(".implode(',',$gid_array).") and field_type not in('user_name','user_email','user_avatar','user_pass','confirm_pass','paragraph','heading')";
-$is_field =  $dbhandler->get_all_result('FIELDS', $column = '*',1,'results',0,false, $sort_by = 'ordering',false,$exclude);
+if(!empty($gid_array))
+{
+    $exclude = "associate_group in(".implode(',',$gid_array).") and field_type not in('user_name','user_email','user_avatar','user_pass','confirm_pass','paragraph','heading')";
+    $is_field =  $dbhandler->get_all_result('FIELDS', $column = '*',1,'results',0,false, $sort_by = 'ordering',false,$exclude);
+}
 $rd = filter_input(INPUT_GET, 'rd');
 ?>
 <div class="pmagic"> 

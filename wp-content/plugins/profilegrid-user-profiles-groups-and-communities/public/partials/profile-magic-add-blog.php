@@ -30,7 +30,7 @@ if(isset($_POST['blog_title']))
         'post_title' =>$post['blog_title'],
         'post_status' => $poststatus,
         'tags_input'	=> $post['blog_tags'],
-        'post_content' => $post['blog_description']
+        'post_content' => wp_rel_nofollow($post['blog_description'])
         );
     $postid = wp_insert_post($arg);
     

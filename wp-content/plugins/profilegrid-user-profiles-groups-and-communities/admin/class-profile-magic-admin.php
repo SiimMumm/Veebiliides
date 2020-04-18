@@ -1467,7 +1467,7 @@ class Profile_Magic_Admin {
         $default = array();
         $get_value = maybe_unserialize(get_option('pg_rm_change_form_type',$default));
         
-        if(!empty($get_value)) {
+        if(!empty($get_value) && is_array($get_value)) {
             foreach($get_value as $form_id)
             {
                 $get_form_option = get_option("pg_rm_change_form_type_$form_id",'');
