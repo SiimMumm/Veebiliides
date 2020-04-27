@@ -220,6 +220,8 @@ class Profile_Magic {
                 //paypal integration for dashboard options
                 $this->loader->add_action( 'profile_magic_setting_option', $plugin_admin, 'pm_profile_magic_add_option_setting_page' );
 		$this->loader->add_action( 'profile_magic_group_option', $plugin_admin, 'pm_profile_magic_add_group_option',10,2);
+                $this->loader->add_action( 'profile_magic_premium_group_option', $plugin_admin, 'pm_profile_magic_premium_group_option',10,2);
+                
 		$this->loader->add_action( 'wp_ajax_pm_load_export_fields_dropdown', $plugin_admin, 'pm_load_export_fields_dropdown' );
                 $this->loader->add_action( 'wp_ajax_pm_upload_csv', $plugin_admin, 'pm_upload_csv' );
                 $this->loader->add_filter('upload_mimes',$plugin_admin, 'profile_grid_myme_types');
@@ -248,6 +250,8 @@ class Profile_Magic {
                 $this->loader->add_action('user_edit_form_tag',$plugin_admin,'pg_action_user_edit_form_tag',10,0);
                 $this->loader->add_action('wp_ajax_pm_remove_attachment_dashboard', $plugin_admin, 'pm_remove_file_attachment');
                 $this->loader->add_action('upload_mimes', $plugin_admin, 'pg_custom_upload_mimes');
+                $this->loader->add_action('profile_magic_setting_option', $plugin_admin, 'profile_magic_premium_setting_option');
+                
         }
 	
 	private function define_access_hooks()

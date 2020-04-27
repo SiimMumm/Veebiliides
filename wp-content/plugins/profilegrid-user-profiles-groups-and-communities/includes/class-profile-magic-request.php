@@ -4567,5 +4567,43 @@ elseif(!empty($is_search)) {
        }
     }
     
+    public function pg_check_premium_extension()
+    {
+        $classes = array('Profilegrid_Userid_Slug_Changer',
+            'Profilegrid_Group_photos',
+            'Profilegrid_Display_Name',
+            'Profilegrid_Group_Fields',
+            'Profilegrid_Bbpress',
+            'Profilegrid_Geolocation',
+            'Profilegrid_Front_End_Groups',
+            'Profilegrid_Mailchimp',
+            'Profilegrid_Woocommerce',
+            'Profilegrid_Social_Connect',
+            'Profilegrid_User_Content',
+            'Profilegrid_Mycred',
+            'Profilegrid_Woocommerce_Wishlist',
+            'Profilegrid_Instagram_Integration',
+            'Profilegrid_Group_Wall',
+            'Profilegrid_Menu_Integration',
+            'Profilegrid_Advanced_Woocommerce',
+            'Profilegrid_EventPrime_Integration',
+            'Profilegrid_Admin_Power',
+            'Profilegrid_Group_Multi_Admins',
+            'Profilegrid_Profile_Labels',
+            'Profilegrid_Stripe_Payment',
+            'Profilegrid_User_Profile_Status',
+            'Profilegrid_User_Photos_Extension');
+        $class_not_exist= array();
+        foreach($classes as $class)
+        {
+           if(!class_exists($class))
+           {
+               $class_not_exist[] =$class;
+           }
+        }
+        return $class_not_exist;
+    }
+    
+    
 // class end
 }

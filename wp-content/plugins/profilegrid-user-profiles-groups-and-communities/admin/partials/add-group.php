@@ -765,7 +765,8 @@ if(filter_input(INPUT_POST,'duplicate'))
         
       </div>
         
-      <?php //do_action('profile_magic_group_option_footer',$id,$group_options);?>
+      <?php
+      do_action('profile_magic_premium_group_option',$id,$group_options);?>
       <div class="buttonarea"> <a href="admin.php?page=pm_manage_groups">
         <div class="cancel">&#8592; &nbsp;
           <?php _e('Cancel','profilegrid-user-profiles-groups-and-communities');?>

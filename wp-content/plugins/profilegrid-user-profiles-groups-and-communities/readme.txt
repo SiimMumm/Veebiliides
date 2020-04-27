@@ -5,7 +5,7 @@ Tags: user profile, community, membership, profile, profiles, employee profile, 
 Requires at least: 3.5
 Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 4.0.0
+Stable tag: 4.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Beautiful profile building plugin for the rest of us…❤️. Create communities, sign-up pages, paid memberships, restrict content and a lot more!
@@ -368,6 +368,9 @@ Yes, you can change field order of custom fields by drag and drop method in dash
 18. Dashboard Area - All the shortcodes associated with ProfileGrid.
 
 == Changelog ==
+
+= 4.0.1 =
+* Fixed extensions related errors.
 
 = 4.0.0 =
 * Messaging system code revamped.
@@ -1028,6 +1031,9 @@ Yes, you can change field order of custom fields by drag and drop method in dash
 * First Release
 
 == Upgrade Notice ==
+
+= 4.0.1 =
+* Fixed extensions related errors.
 
 = 4.0.0 =
 * Messaging system code revamped.

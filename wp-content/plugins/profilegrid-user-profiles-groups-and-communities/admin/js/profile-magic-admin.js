@@ -1129,6 +1129,20 @@ jQuery(document).ready(function(){
 });
 
 jQuery(document).ready(function(){
+    jQuery("#pm-premium-popup").click(function(){
+        jQuery(".pm-popup").css("visibility", "visible");
+        jQuery(".pm-curtains").css("visibility", "visible");
+    });
+});
+
+jQuery(document).ready(function(){
+    jQuery("#pm-premium-popup").click(function(){
+        jQuery(".pm-popup").css("visibility", "visible");
+        jQuery(".pm-curtains").css("visibility", "visible");
+    });
+});
+
+jQuery(document).ready(function(){
     jQuery(".pm-popup-close").click(function(){
         jQuery(".pm-popup").css("visibility", "hidden");
         jQuery(".pm-curtains").css("visibility", "hidden");

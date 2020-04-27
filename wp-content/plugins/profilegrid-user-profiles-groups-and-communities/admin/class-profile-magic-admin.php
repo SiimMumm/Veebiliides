@@ -255,11 +255,19 @@ class Profile_Magic_Admin {
                 add_submenu_page("",__("Woocommerce Wishlist Extension","profilegrid-user-profiles-groups-and-communities"),__("Woocommerce Wishlist Extension","profilegrid-user-profiles-groups-and-communities"),"manage_options","pm_woocommerce_wishlist_extension",array( $this, 'pm_woocommerce_wishlist_extension' ));
                 add_submenu_page("",__("Profile Tabs Settings","profilegrid-user-profiles-groups-and-communities"),__("Profile Tabs Settings","profilegrid-user-profiles-groups-and-communities"),"manage_options","pm_profile_tabs_settings",array( $this, 'pm_profile_tabs_settings' ));
                 add_submenu_page("",__("Private Profile Settings","profilegrid-user-profiles-groups-and-communities"),__("Private Profile Settings","profilegrid-user-profiles-groups-and-communities"),"manage_options","pm_private_profile_settings",array( $this, 'pm_private_profile_settings' ));
+                if(!class_exists('Profilegrid_Profile_Labels') || !class_exists('Profilegrid_User_Content')):
+                    add_submenu_page("pm_manage_groups",__("More","profilegrid-user-profiles-groups-and-communities"),__("More","profilegrid-user-profiles-groups-and-communities"),"manage_options","pm_premium_options",array( $this, 'pm_premium_options' ));
+                endif;
         }
         
         public function pm_profile_tabs_settings()
         {
             include 'partials/profile-tab-setting.php';
+        }
+        
+        public function pm_premium_options()
+        {
+            include 'partials/premium-features.php';
         }
         
         public function pm_private_profile_settings()
@@ -380,6 +388,11 @@ class Profile_Magic_Admin {
         public function pm_profile_magic_add_group_option($gid,$group_options)
 	{
 		include 'partials/profile-magic-group-option.php';	
+	}
+        
+        public function pm_profile_magic_premium_group_option($gid,$group_options)
+	{
+		include 'partials/premium-group-options.php';	
 	}
         
         public function pm_profile_magic_add_option_setting_page()
@@ -1727,5 +1740,9 @@ class Profile_Magic_Admin {
         die;
     }
     
+    public function profile_magic_premium_setting_option()
+    {
+        include 'partials/premium_setting_option.php';
+    }
       
 }
